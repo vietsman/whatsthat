@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: whatsthat
+Description: C99 WhatsApp Web multi-device client library scaffold
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lwhatsthat
+Cflags: -I${includedir}
