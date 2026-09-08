@@ -1,0 +1,8 @@
+// SPDX-License-Identifier: MIT
+syntax = "proto2";
+package InstamadilloDeleteMessage;
+option go_package = "go.mau.fi/whatsmeow/proto/instamadilloDeleteMessage";
+
+message DeleteMessagePayload {
+	optional string messageOtid = 1;
+}
