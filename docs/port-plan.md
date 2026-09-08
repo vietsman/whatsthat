@@ -15,7 +15,7 @@ This document maps upstream `tulir/whatsmeow` Go modules to planned C99 modules 
 
 ### Enumerated proto files
 
-The following `.proto` files were identified in upstream `proto/` and must be converted with `protobuf-c`:
+The following `.proto` files were identified in upstream `proto/` and are now vendored at `third_party/protos/` with matching relative paths.
 
 - proto/waAdv/WAAdv.proto
 - proto/waCert/WACert.proto
@@ -74,6 +74,27 @@ The following `.proto` files were identified in upstream `proto/` and must be co
 - proto/instamadilloCoreTypeAdminMessage/InstamadilloCoreTypeAdminMessage.proto
 - proto/waConsumerApplicationParameterised/WAConsumerApplicationParameterised.proto
 - proto/waArmadilloMiTransportAdminMessage/WAArmadilloMiTransportAdminMessage.proto
+
+Proto origin mapping and collection command are tracked in `tools/proto_collect.sh`.
+
+## Protobuf-C generation notes (Milestone 1)
+
+- Minimum supported versions:
+  - `protoc >= 3.0.0`
+  - `protobuf-c >= 1.3.0` (`protoc-c`)
+- Generated bindings are committed in `src/proto/generated/` for deterministic CI builds.
+- Build-time regeneration is optional:
+
+```bash
+cmake -S . -B build -DWHATSTHAT_REGENERATE_PROTO=ON
+cmake --build build --target whatsthat_proto_generate
+```
+
+- Verification command:
+
+```bash
+git diff -- third_party/protos src/proto/generated
+```
 
 ## C module mapping plan
 

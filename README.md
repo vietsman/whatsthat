@@ -4,13 +4,11 @@ C99 port of `tulir/whatsmeow` (WhatsApp Web multidevice API client library).
 
 ## Status
 
-This repository currently contains **Milestone 0** scaffolding:
-- C99 project layout and initial public header under `include/whatsthat/`
-- Initial module directories under `src/`
-- CMake build with pkg-config dependency detection stubs
-- Example CLI scaffold (`whatsthat_cli`)
-- GitHub Actions CI compile/test skeleton
-- Upstream analysis and package/proto mapping in `docs/port-plan.md`
+This repository currently contains **Milestone 1** protobuf conversion:
+- Upstream whatsmeow proto inventory vendored under `third_party/protos/proto/`
+- Protobuf-C generated bindings committed under `src/proto/generated/`
+- Core proto helper wrappers in `src/proto/helpers.c` / `src/proto/helpers.h`
+- Round-trip serialization unit tests in `tests/proto_roundtrip.c`
 
 ## Build
 
@@ -30,4 +28,26 @@ ctest --test-dir build --output-on-failure
 - SQLite3
 - zlib
 
-Dependency checks are wired through `pkg-config` in CMake and are currently optional during scaffolding.
+## Protobuf generation and verification
+
+- Minimum supported versions:
+  - `protoc >= 3.0.0`
+  - `protobuf-c >= 1.3.0` (plugin binary: `protoc-c`)
+- Pull/update upstream proto files:
+
+```bash
+./tools/proto_collect.sh main
+```
+
+- Regenerate protobuf-c bindings from vendored sources:
+
+```bash
+cmake -S . -B build -DWHATSTHAT_REGENERATE_PROTO=ON
+cmake --build build --target whatsthat_proto_generate
+```
+
+- Verify generated files are committed and up-to-date:
+
+```bash
+git diff -- third_party/protos src/proto/generated
+```
