@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+
+set -euo pipefail
+
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH='' cd -- "$SCRIPT_DIR/.." && pwd)
+OUT_DIR="$REPO_ROOT/third_party/protos"
+UPSTREAM_OWNER="tulir"
+UPSTREAM_REPO="whatsmeow"
+UPSTREAM_REF="${1:-main}"
+BASE_URL="https://raw.githubusercontent.com/${UPSTREAM_OWNER}/${UPSTREAM_REPO}/${UPSTREAM_REF}"
+
+PROTO_FILES=(
+  "proto/waAdv/WAAdv.proto"
+  "proto/waCert/WACert.proto"
+  "proto/waCommon/WACommon.proto"
+  "proto/waMmsRetry/WAMmsRetry.proto"
+  "proto/waWinUIApi/WAWinUIApi.proto"
+  "proto/waWeb/WAWebProtobufsWeb.proto"
+  "proto/waAea/WAWebProtobufsAea.proto"
+  "proto/waWa6/WAWebProtobufsWa6.proto"
+  "proto/waE2E/WAWebProtobufsE2E.proto"
+  "proto/waFingerprint/WAFingerprint.proto"
+  "proto/waMultiDevice/WAMultiDevice.proto"
+  "proto/waBotMetadata/WABotMetadata.proto"
+  "proto/waMsgTransport/WAMsgTransport.proto"
+  "proto/waArmadilloXMA/WAArmadilloXMA.proto"
+  "proto/waCompanionReg/WACompanionReg.proto"
+  "proto/waArmadilloICDC/WAArmadilloICDC.proto"
+  "proto/waMediaTransport/WAMediaTransport.proto"
+  "proto/waE2EGuest/WAWebProtobufsE2EGuest.proto"
+  "proto/waMediaEntryData/WAMediaEntryData.proto"
+  "proto/waAICommon/WAWebProtobufsAICommon.proto"
+  "proto/waMsgApplication/WAMsgApplication.proto"
+  "proto/waVnameCert/WAWebProtobufsVnameCert.proto"
+  "proto/waReporting/WAWebProtobufsReporting.proto"
+  "proto/waEphemeral/WAWebProtobufsEphemeral.proto"
+  "proto/waSyncAction/WAWebProtobufSyncAction.proto"
+  "proto/waServerSync/WAWebProtobufsServerSync.proto"
+  "proto/waHistorySync/WAWebProtobufsHistorySync.proto"
+  "proto/waRoutingInfo/WAWebProtobufsRoutingInfo.proto"
+  "proto/waStatusAttributions/WAStatusAttributions.proto"
+  "proto/waGroupHistory/WAWebProtobufsGroupHistory.proto"
+  "proto/waAICommonDeprecated/WAAICommonDeprecated.proto"
+  "proto/waWebLabyrinthWaWasm/WAWebLabyrinthWaWasm.proto"
+  "proto/waUserPassword/WAWebProtobufsUserPassword.proto"
+  "proto/waConsumerApplication/WAConsumerApplication.proto"
+  "proto/waCommonParameterised/WACommonParameterised.proto"
+  "proto/instamadilloAddMessage/InstamadilloAddMessage.proto"
+  "proto/waArmadilloApplication/WAArmadilloApplication.proto"
+  "proto/waArmadilloBackupCommon/WAArmadilloBackupCommon.proto"
+  "proto/waArmadilloBackupMessage/WAArmadilloBackupMessage.proto"
+  "proto/waChatLockSettings/WAWebProtobufsChatLockSettings.proto"
+  "proto/instamadilloCoreTypeText/InstamadilloCoreTypeText.proto"
+  "proto/instamadilloCoreTypeLink/InstamadilloCoreTypeLink.proto"
+  "proto/waArmadilloTransportEvent/WAArmadilloTransportEvent.proto"
+  "proto/instamadilloXmaContentRef/InstamadilloXmaContentRef.proto"
+  "proto/instamadilloDeleteMessage/InstamadilloDeleteMessage.proto"
+  "proto/instamadilloCoreTypeMedia/InstamadilloCoreTypeMedia.proto"
+  "proto/waDeviceCapabilities/WAWebProtobufsDeviceCapabilities.proto"
+  "proto/instamadilloTransportPayload/InstamadilloTransportPayload.proto"
+  "proto/instamadilloSupplementMessage/InstamadilloSupplementMessage.proto"
+  "proto/waSyncdSnapshotRecovery/WAWebProtobufsSyncdSnapshotRecovery.proto"
+  "proto/instamadilloCoreTypeActionLog/InstamadilloCoreTypeActionLog.proto"
+  "proto/waQuickPromotionSurfaces/WAWebProtobufsQuickPromotionSurfaces.proto"
+  "proto/instamadilloCoreTypeCollection/InstamadilloCoreTypeCollection.proto"
+  "proto/waLidMigrationSyncPayload/WAWebProtobufLidMigrationSyncPayload.proto"
+  "proto/instamadilloCoreTypeAdminMessage/InstamadilloCoreTypeAdminMessage.proto"
+  "proto/waConsumerApplicationParameterised/WAConsumerApplicationParameterised.proto"
+  "proto/waArmadilloMiTransportAdminMessage/WAArmadilloMiTransportAdminMessage.proto"
+)
+
+mkdir -p "$OUT_DIR"
+
+echo "Collecting ${#PROTO_FILES[@]} proto files from ${UPSTREAM_OWNER}/${UPSTREAM_REPO}@${UPSTREAM_REF}"
+
+for rel in "${PROTO_FILES[@]}"; do
+  src_url="${BASE_URL}/${rel}"
+  dst_path="${OUT_DIR}/${rel}"
+  mkdir -p "$(dirname "$dst_path")"
+  curl -fsSL "$src_url" -o "$dst_path"
+  printf '%s <- %s\n' "$rel" "$src_url"
+done
+
+echo "Done. Wrote ${#PROTO_FILES[@]} files into ${OUT_DIR}."
